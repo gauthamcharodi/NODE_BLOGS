@@ -25,15 +25,21 @@ const signup = async (req, res) => {
   }
 };
 
-const login = async () => {
+const login = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
-    if (!existingUser) {
+    if (!existingUser && !(await existingUser.comparePassword(
+      req.body.password,existingUser.password) )){
       return res.status(400).json({
         status: "fail",
-        message: "youre not an existing user, please signup",
+        message: "User name and password is not correct",
       });
     }
+// const isMatch=await existingUser.comparePassword(
+//   req.body.password,existingUser.password) 
+
+  // console.log(isMatch);
+  
     res.status(200).json({
       status: "success",
       data: {
@@ -50,4 +56,5 @@ const login = async () => {
 
 module.exports = {
   signup,
+  login,
 };

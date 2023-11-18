@@ -49,5 +49,8 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.methods.comparePassword = async function (pwd, pwdDB) {
+  return await bcrypt.compare(pwd, pwdDB);
+};
 
 module.exports = model("user", userSchema);
