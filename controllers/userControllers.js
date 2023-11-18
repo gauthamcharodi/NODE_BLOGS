@@ -25,6 +25,29 @@ const signup = async (req, res) => {
   }
 };
 
+const login = async () => {
+  try {
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (!existingUser) {
+      return res.status(400).json({
+        status: "fail",
+        message: "youre not an existing user, please signup",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      data: {
+        existingUser,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "fail",
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
-    signup
-}
+  signup,
+};
