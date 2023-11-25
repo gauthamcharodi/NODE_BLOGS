@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const jwt =require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 const auth = async (req, res, next) => {
   try {
     let testToken = req.headers.authorization;
@@ -8,21 +8,21 @@ const auth = async (req, res, next) => {
       token = testToken.split(" ")[1];
     }
     // console.log(token);
-    if(!token){
-        return res.status(401).json({
-            status: "fail",
-            message:'Try logging in to access'
-          });
+    if (!token) {
+      return res.status(401).json({
+        status: "fail",
+        message: "Try logging in to access",
+      });
     }
-    const decodedToken=await jwt.verify(token,process.env.JWT_SECRET)
-    const user=await User.findById(decodedToken.id)
-    if(!user){
-      return  res.status(401).json({
-            status: "fail",
-            message:"user no longer exists",
-          });
+    const decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decodedToken.id);
+    if (!user) {
+      return res.status(401).json({
+        status: "fail",
+        message: "user no longer exists",
+      });
     }
-    req.user=user;
+    req.user = user;
     next();
   } catch (error) {
     res.status(401).json({
@@ -31,4 +31,28 @@ const auth = async (req, res, next) => {
     });
   }
 };
-module.exports = auth;
+
+// const verifyRole = (role) => {
+//   return (req, res, next) => {
+//     if (req.user.role !== role) {
+//       return res.status(400).json({
+//         status: "fail",
+//         message: "you're not authorized",
+//       });
+//     }
+//     next();
+//   };
+// };
+
+const verifyRole = (role) => {
+  return (req, res, next) => {
+    if (!role.includes(req.user.role)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "you're not authorized",
+      });
+    }
+    next();
+  };
+};
+module.exports = { auth, verifyRole };
