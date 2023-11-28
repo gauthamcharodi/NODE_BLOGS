@@ -96,33 +96,38 @@ const getBlogs = async (req, res) => {
   }
 };
 
-const updateBlog = async (req, res) => {
+const updateBlog=async(req,res)=>{
   try {
-    let payload = {
-      ...req.body,
-      author: req.user._id,
-    };
-    let id = req.params.id;
+      const {id}=req.params
+      const {title,description,snippet,image,ratings}=req.body
+      if(req.user.role==='author'){
+          const updatedBlog=await Blog.findByIdAndUpdate({_id:id},{$set:{title:title,snippet:snippet,description:description,image:image,}},{new:true,runValidators:true})
+      res.status(200).json({
+          status:'success',
+          data:{
+              updatedBlog
+          }
+      })
+      }
+      if(req.user.role==='user'){
+          const updatedBlog=await Blog.findByIdAndUpdate({_id:id},{$set:{ratings:ratings}},{new:true,runValidators:true})
+      res.status(200).json({
+          status:'success',
+          data:{
+              updatedBlog
+          }
+      })
+      }
 
-    const updated_blog = await blogModel.findByIdAndUpdate(id, payload, {
-      new: true,
-    });
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        updated_blog,
-      },
-    });
   } catch (error) {
-    res.status(401).json({
-      status: "failed",
-      data: {
-        msg: error.message,
-      },
-    });
+      res.status(400).json({
+          status:'fail',
+          message:error.message
+      })
   }
-};
+}
+
+
 
 const deleteBlog = async (req, res) => {
   try {
