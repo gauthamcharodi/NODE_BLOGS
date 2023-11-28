@@ -101,7 +101,7 @@ const updateBlog=async(req,res)=>{
       const {id}=req.params
       const {title,description,snippet,image,ratings}=req.body
       if(req.user.role==='author'){
-          const updatedBlog=await Blog.findByIdAndUpdate({_id:id},{$set:{title:title,snippet:snippet,description:description,image:image,}},{new:true,runValidators:true})
+          const updatedBlog=await blogModel.findByIdAndUpdate({_id:id},{$set:{title:title,snippet:snippet,description:description,image:image,}},{new:true,runValidators:true})
       res.status(200).json({
           status:'success',
           data:{
@@ -110,7 +110,7 @@ const updateBlog=async(req,res)=>{
       })
       }
       if(req.user.role==='user'){
-          const updatedBlog=await Blog.findByIdAndUpdate({_id:id},{$set:{ratings:ratings}},{new:true,runValidators:true})
+          const updatedBlog=await .findByIdAndUpdate({_id:id},{$set:{ratings:ratings}},{new:true,runValidators:true})
       res.status(200).json({
           status:'success',
           data:{

@@ -27,6 +27,8 @@ const blogSchema = new Schema({
   ratings: {
     type: Number,
     default: 1,
+    min: [1, "please enter above 1"],
+    max: [5, "please enter below 5"],
     validator: {
       validate: function (value) {
         return value >= 1 && value <= 5;
