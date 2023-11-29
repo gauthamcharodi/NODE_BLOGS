@@ -1,30 +1,23 @@
 const blogModel = require("../models/Blogs");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
 
-const postBlog = async (req, res) => {
-  try {
-    let user = req.user;
-    const newBlog = await blogModel.create({
-      title: req.body.title,
-      snippet: req.body.snippet,
-      description: req.body.description,
-      image: req.body.image,
-      author: user._id,
-    });
-    res.status(201).json({
-      status: "success",
-      data: {
-        newBlog,
-      },
-    });
-  } catch (error) {
-    res.status(401).json({
-      status: "failed",
-      data: {
-        msg: error.message,
-      },
-    });
-  }
-};
+const postBlog = asyncErrorHandler(async (req, res) => {
+  let user = req.user;
+  const newBlog = await blogModel.create({
+    title: req.body.title,
+    snippet: req.body.snippet,
+    description: req.body.description,
+    image: req.body.image,
+    author: user._id,
+  });
+  res.status(201).json({
+    status: "success",
+    data: {
+      newBlog,
+    },
+  });
+});
+
 const getByAuthor = async (req, res) => {
   try {
     let user = req.user;
