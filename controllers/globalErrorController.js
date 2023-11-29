@@ -1,3 +1,5 @@
+const CustomError = require("../utils/CustomError");
+
 const devError = (res, err) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -21,6 +23,14 @@ const prodError = (res, err) => {
   }
 };
 
+const ValidationErrorHandler = (err) => {
+  let errArray = Object.values(err.errors);
+  let msgs = errArray.map((doc) => doc.message);
+  let msg = msgs.join(" ,");
+  let error = new CustomError(400, msg);
+  return error;
+};
+
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
@@ -29,6 +39,9 @@ module.exports = (err, req, res, next) => {
   }
 
   if (process.env.NODE_ENV === "production") {
+    if (err.name === "ValidationError") {
+      err = ValidationErrorHandler(err);
+    }
     prodError(res, err);
   }
 };
