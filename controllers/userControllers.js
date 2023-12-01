@@ -21,7 +21,6 @@ const signup = asyncErrorHandler(async (req, res, next) => {
   //   next(err);
   // }
 
-
   const newUser = await User.create(req.body);
   const token = await genToken(newUser._id);
   res.status(201).json({
@@ -33,7 +32,7 @@ const signup = asyncErrorHandler(async (req, res, next) => {
   });
 });
 
-const login = asyncErrorHandler(async (req, res,next) => {
+const login = asyncErrorHandler(async (req, res, next) => {
   if (!req.body.email || !req.body.password) {
     // return res.status(400).json({
     //   status: "fail",
