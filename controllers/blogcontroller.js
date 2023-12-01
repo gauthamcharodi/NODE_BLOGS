@@ -38,8 +38,7 @@ const getByAuthor = async (req, res) => {
   }
 };
 
-const getBlog = async (req, res) => {
-  try {
+const getBlog =asyncErrorHandler (async (req, res) => {
     let blog = await blogModel.findById(req.params.id);
     res.status(200).json({
       status: "success",
@@ -47,15 +46,7 @@ const getBlog = async (req, res) => {
         blog,
       },
     });
-  } catch (err) {
-    res.status(401).json({
-      status: "failed",
-      data: {
-        msg: err.message,
-      },
-    });
-  }
-};
+  } )
 
 const getBlogs = async (req, res) => {
   try {
