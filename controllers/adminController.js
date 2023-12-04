@@ -41,10 +41,10 @@
 //
 
 const { loginWrapper, signupWrapper } = require("../utils/auth");
-const User = require("../models/User");
+const admin = require("../models/admin");
 
-const login = loginWrapper(User);
-const signup = signupWrapper(User);
+const login = loginWrapper(admin);
+const signup = signupWrapper(admin);
 
 module.exports = {
   signup,

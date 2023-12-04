@@ -1,5 +1,7 @@
 const express = require("express");
 const authRoutes = require("./routes/userRoutes");
+const authRoutes1 = require("./routes/authorRoutes");
+const authRoutes2 = require("./routes/adminRoutes");
 const blogRoutes = require("./routes/BlogRoutes");
 const CustomError = require("./utils/CustomError");
 const globalErrorController = require("./controllers/globalErrorController");
@@ -7,6 +9,8 @@ const app = express();
 
 app.use(express.json());
 app.use("/app/v1/users", authRoutes);
+app.use("/app/v1/author", authRoutes1);
+app.use("/app/v1/admin", authRoutes2);
 app.use("/app/v1/blogs", blogRoutes);
 
 app.all("*", (req, res, next) => {
