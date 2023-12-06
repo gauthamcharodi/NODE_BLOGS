@@ -8,6 +8,7 @@ const adminSchema = new Schema(
       type: String,
       required: [true, "name field cant be empty"],
       trim: true,
+      default: "admin",
     },
     email: {
       type: String,

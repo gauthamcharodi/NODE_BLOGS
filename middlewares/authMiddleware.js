@@ -2,6 +2,8 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/CustomError");
+const admin = require("../models/admin");
+const author = require("../models/author");
 
 const auth = asyncErrorHandler(async (req, res, next) => {
   let testToken = req.headers.authorization;
@@ -15,15 +17,20 @@ const auth = asyncErrorHandler(async (req, res, next) => {
     next(err);
   }
   const decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
-  const user = await User.findById(decodedToken.id);
-  if (!user) {
+  let Models = [User, admin, author];
+  let user = Models.map(async (Model) => {
+    let user = await Model.findById(decodedToken.id);
+    return user;
+  });
+  user = await Promise.all(user);
+  let authorizedUser = user.filter((doc) => doc !== null);
+  if (!authorizedUser) {
     const err = new CustomError(401, "user no longer exists");
     next(err);
   }
-  req.user = user;
+  req.user = authorizedUser[0];
   next();
 });
-
 // const verifyRole = (role) => {
 //   return (req, res, next) => {
 //     if (req.user.role !== role) {
@@ -39,10 +46,6 @@ const auth = asyncErrorHandler(async (req, res, next) => {
 const verifyRole = (role) => {
   return (req, res, next) => {
     if (!role.includes(req.user.role)) {
-      // return res.status(400).json({
-      //   status: "fail",
-      //   message: "you're not authorized",
-      // });
       const err = new CustomError(401, "You are not authorized");
       next(err);
     }
